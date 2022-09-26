@@ -2,7 +2,6 @@ const Posts = require('../posts/posts-model')
 const Users = require('../users/users-model')
 
 function logger(req, res, next) {
-  // DO YOUR MAGIC
   const timestamp = new Date().toLocaleDateString()
   const method = req.method
   const url = req.originalUrl
@@ -11,13 +10,10 @@ function logger(req, res, next) {
 }
 
 async function validateUserId(req, res, next) {
-  // DO YOUR MAGIC
   try {
     const user = await Users.getById(req.params.id)
     if (!user) {
-      res.status(404).json({
-        message: 'missing required name field'
-      })
+      next({status: 404, message: 'user not found'})
     } else {
       res.user = user
       next()
@@ -29,7 +25,6 @@ async function validateUserId(req, res, next) {
 }
 
 function validateUser(req, res, next) {
-  // DO YOUR MAGIC
   const {name} = req.body;
     if (!name || !name.trim()) {
       res.status(400).json({
@@ -42,7 +37,6 @@ function validateUser(req, res, next) {
 }
 
 function validatePost(req, res, next) {
-  // DO YOUR MAGIC
   const {text} = req.body
     if (!text || !text.trim()) {
       res.status(400).json({
@@ -54,7 +48,6 @@ function validatePost(req, res, next) {
     }
 }
 
-// do not forget to expose these functions to other modules
 module.exports = {
   logger,
   validateUserId,
