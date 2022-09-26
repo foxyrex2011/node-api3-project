@@ -6,11 +6,17 @@ const {
 } = require('../middleware/middleware')
 // You will need `users-model.js` and `posts-model.js` both
 // The middleware functions also need to be required
-
+const User = require('../users/users-model')
+const Post = require('../posts/posts-model')
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
   // RETURN AN ARRAY WITH ALL THE USERS
+  User.get()
+    .then(users => {
+      res.json(users)
+    })
+    .catch(next)
 });
 
 router.get('/:id', validateUserId, (req, res) => {
@@ -45,6 +51,14 @@ router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   // this needs a middleware to verify user id
   // and another middleware to check that the request body is valid
 });
+
+router.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    customeMessage: 'something tragic inside posts router happened',
+    message: err.message,
+    stack: err.stack
+  })
+})
 
 // do not forget to export the router
 module.exports = router;
